@@ -6,7 +6,9 @@
         "node": true
     },
     "rules": {
-        "require-jsdoc": "off"
+        "require-jsdoc": "off",
+        "max-len": "off",
+        "indent": ["error", 4]
     },
     "extends": ["eslint:recommended", "google"]
 }
