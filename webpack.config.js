@@ -9,9 +9,27 @@ const isDev = !isProd;
 console.log(isDev, isProd);
 const filename = (ext) => isDev ? `[name].${ext}` : `[name].[contenthash].${ext}`;
 
+const jsLoaders = () => {
+    const loaders = [
+        {
+            loader: "babel-loader",
+            options: {
+                presets: ['@babel/preset-env']
+            }
+        }
+    ]
+
+    if (isDev) {
+        loaders.push('eslint-loader');
+    }
+
+    return loaders;
+}
+
 module.exports = {
     context: path.resolve(__dirname, 'src'),
     mode: 'development',
+    target: process.env.NODE_ENV === "development" ? "web" : "browserslist",
     entry: ['@babel/polyfill', './index.js'],
     output: {
         filename: filename('js'),
@@ -28,8 +46,6 @@ module.exports = {
     devServer: {
         port: 3000,
         hot: true,
-        // watchContentBase: true,
-        // liveReload: true,
     },
     plugins: [
         new CleanWebpackPlugin(),
@@ -54,13 +70,6 @@ module.exports = {
                 test: /\.s[ac]ss$/i,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    // {
-                    //     loader: MiniCssExtractPlugin.loader,
-                    //     options: {
-                    //         hmr: isDev,
-                    //         reloadAll: true,
-                    //     },
-                    // },
                     'css-loader',
                     'sass-loader',
                 ]
@@ -68,12 +77,7 @@ module.exports = {
             {
                 test: /\.m?js$/,
                 exclude: /node_modules/,
-                use: {
-                  loader: "babel-loader",
-                  options: {
-                    presets: ['@babel/preset-env']
-                  }
-                }
+                use: jsLoaders(),
               }
         ]
     }
